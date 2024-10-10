@@ -1,6 +1,6 @@
 {
   "name": "@thunderbirdops/services-utils",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Thunderbird",
   "license": "MPL-2.0",
   "main": "dist/index.js",
