@@ -1,0 +1,43 @@
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
+
+name: npmjs.com package
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+concurrency:
+  group: "npm"
+  cancel-in-progress: true
+
+jobs:
+  publish-npm:
+    environment:
+      name: npm
+      url: "https://www.npmjs.com/package/@thunderbirdops/services-ui"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install project deps
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Copy extra files to dist
+        run: |
+          cp README.md ./dist/README.md
+          cp LICENSE ./dist/LICENSE
+          cp package.json ./dist/package.json
+
+      - name: Publish project on npm
+        run: npm publish ./dist
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
